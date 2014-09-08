@@ -649,16 +649,13 @@ public class MongoStore<K, T extends PersistentBase> extends
       Schema innerSchema = recField.schema();
       DocumentFieldType innerStoreType = mapping
           .getDocumentFieldType(innerSchema.getName());
-      String innerDocField = mapping.getDocumentField(recField.name()) != null ? mapping
-          .getDocumentField(recField.name()) : recField.name();
-      String fieldPath = docf + "." + innerDocField;
-      LOG.debug(
-          "Load from DBObject (RECORD), field:{}, schemaType:{}, docField:{}, storeType:{}",
-          new Object[] { recField.name(), innerSchema.getType(), fieldPath,
-              innerStoreType });
+      String fieldName = recField.name();
+        LOG.debug(
+          "Load from DBObject (RECORD), field:{}, schemaType:{}, storeType:{}",
+          new Object[] {fieldName, innerSchema.getType(), innerStoreType });
       record.put(
           recField.pos(),
-          fromDBObject(innerSchema, innerStoreType, recField, innerDocField,
+          fromDBObject(innerSchema, innerStoreType, recField, fieldName,
               innerBson));
     }
     result = record;
@@ -884,15 +881,16 @@ public class MongoStore<K, T extends PersistentBase> extends
     BasicDBObject record = new BasicDBObject();
     for (Field member : fieldSchema.getFields()) {
       Object innerValue = ((PersistentBase) value).get(member.pos());
-      String innerDoc = mapping.getDocumentField(member.name());
+      String fieldName = member.name();
+      String innerDoc = mapping.getDocumentField(fieldName);
       Type innerType = member.schema().getType();
       DocumentFieldType innerStoreType = mapping.getDocumentFieldType(innerDoc);
       LOG.debug(
           "Transform value to DBObject (RECORD), docField:{}, schemaType:{}, storeType:{}",
-          new Object[] { member.name(), member.schema().getType(),
+          new Object[] {fieldName, member.schema().getType(),
               innerStoreType });
       record.put(
-          member.name(),
+              fieldName,
           toDBObject(docf, member.schema(), innerType, innerStoreType,
               innerValue));
     }

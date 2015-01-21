@@ -132,16 +132,32 @@ public class DefaultFactory<K, T extends PersistentBase> extends
       }
       break;
     case LESS:
-      builder.lessThan(operands);
+      if (operands.size() == 1) {
+        builder.lessThan(operands.iterator().next());
+      } else {
+        throw new IllegalArgumentException("Only support operands with multiple values for FilterOp EQUALS / NOT_EQUALS !");
+      }
       break;
     case LESS_OR_EQUAL:
-      builder.lessThanEquals(operands);
+      if (operands.size() == 1) {
+        builder.lessThanEquals(operands.iterator().next());
+      } else {
+        throw new IllegalArgumentException("Only support operands with multiple values for FilterOp EQUALS / NOT_EQUALS !");
+      }
       break;
     case GREATER:
-      builder.greaterThan(operands);
+      if (operands.size() == 1) {
+        builder.greaterThan(operands.iterator().next());
+      } else {
+        throw new IllegalArgumentException("Only support operands with multiple values for FilterOp EQUALS / NOT_EQUALS !");
+      }
       break;
     case GREATER_OR_EQUAL:
-      builder.greaterThanEquals(operands);
+      if (operands.size() == 1) {
+        builder.greaterThanEquals(operands.iterator().next());
+      } else {
+        throw new IllegalArgumentException("Only support operands with multiple values for FilterOp EQUALS / NOT_EQUALS !");
+      }
       break;
     default:
       throw new IllegalArgumentException(filterOp

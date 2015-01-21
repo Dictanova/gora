@@ -74,7 +74,7 @@ public class DefaultFactoryTest {
 
   @Test
   public void testCreateFilter_mapField_notEquals() throws Exception {
-    MapFieldValueFilter<String, WebPage> filter = createHeadersFilter();
+    MapFieldValueFilter<String, WebPage> filter = createHeadersContentTypeFilter();
     filter.setFilterOp(FilterOp.NOT_EQUALS);
     filter.setFilterIfMissing(true);
 
@@ -85,7 +85,7 @@ public class DefaultFactoryTest {
 
   @Test
   public void testCreateFilter_mapField_equalsOrNull() throws Exception {
-    MapFieldValueFilter<String, WebPage> filter = createHeadersFilter();
+    MapFieldValueFilter<String, WebPage> filter = createHeadersContentTypeFilter();
     filter.setFilterOp(FilterOp.EQUALS);
     filter.setFilterIfMissing(false); // include doc with missing field
 
@@ -93,6 +93,30 @@ public class DefaultFactoryTest {
     assertEquals(
         "{ \"$or\" : [ { \"h.C·T\" : { \"$exists\" : false}} , { \"h.C·T\" : \"text/html\"}]}",
         dbObject.toString());
+  }
+
+  @Test
+  public void testCreateFilter_mapField_lte() throws Exception {
+    MapFieldValueFilter<String, WebPage> filter = createHeadersLastModifiedFilter();
+    filter.setFilterOp(FilterOp.LESS_OR_EQUAL);
+    filter.setFilterIfMissing(true);
+
+    DBObject dbObject = filterFactory.createFilter(filter, store);
+    assertEquals(
+            "{ \"h.L·M\" : { \"$lte\" : \"1997-07-16T19:20:30.45Z\"}}",
+            dbObject.toString());
+  }
+
+  @Test
+  public void testCreateFilter_mapField_gte() throws Exception {
+    MapFieldValueFilter<String, WebPage> filter = createHeadersLastModifiedFilter();
+    filter.setFilterOp(FilterOp.GREATER_OR_EQUAL);
+    filter.setFilterIfMissing(true);
+
+    DBObject dbObject = filterFactory.createFilter(filter, store);
+    assertEquals(
+            "{ \"h.L·M\" : { \"$gte\" : \"1997-07-16T19:20:30.45Z\"}}",
+            dbObject.toString());
   }
 
   @Test
@@ -106,7 +130,7 @@ public class DefaultFactoryTest {
   @Test
   public void testCreateFilter_list_2() throws Exception {
     FilterList<String, WebPage> filter = new FilterList<String, WebPage>();
-    MapFieldValueFilter<String, WebPage> hFilter = createHeadersFilter();
+    MapFieldValueFilter<String, WebPage> hFilter = createHeadersContentTypeFilter();
     hFilter.setFilterIfMissing(true);
     hFilter.setFilterOp(FilterOp.EQUALS);
     filter.addFilter(hFilter);
@@ -121,11 +145,19 @@ public class DefaultFactoryTest {
         dbObject.toString());
   }
 
-  private MapFieldValueFilter<String, WebPage> createHeadersFilter() {
+  private MapFieldValueFilter<String, WebPage> createHeadersContentTypeFilter() {
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<String, WebPage>();
     filter.setFieldName(WebPage.Field.HEADERS.toString());
     filter.setMapKey(new Utf8("C.T"));
     filter.getOperands().add("text/html");
+    return filter;
+  }
+
+  private MapFieldValueFilter<String, WebPage> createHeadersLastModifiedFilter() {
+    MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<String, WebPage>();
+    filter.setFieldName(WebPage.Field.HEADERS.toString());
+    filter.setMapKey(new Utf8("L.M"));
+    filter.getOperands().add("1997-07-16T19:20:30.45Z");
     return filter;
   }
 

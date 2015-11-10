@@ -247,7 +247,7 @@ public class MongoStore<K, T extends PersistentBase> extends
     boolean auth = true;
     // If configuration contains a login + secret, try to authenticated with DB
     if (login != null && secret != null) {
-      auth = db.authenticate(login, secret.toCharArray());
+        LOG.warn("Authentication is not supported in this release.");
     }
 
     if (auth) {
@@ -339,11 +339,6 @@ public class MongoStore<K, T extends PersistentBase> extends
    */
   @Override
   public void close() {
-    mongoClientDB.cleanCursors(true);
-    // mongoClient.close();
-    // LOG.info("Closed database and connection for Mongo instance {}.",
-    // new Object[]{mongoClient});
-    LOG.debug("Not closed!!!");
   }
 
   /**
@@ -701,8 +696,12 @@ public class MongoStore<K, T extends PersistentBase> extends
       // Try auto-conversion of BSON data to ObjectId
       // It will work if data is stored as String or as ObjectId
       Object bin = easybson.get(docf);
-      ObjectId id = ObjectId.massageToObjectId(bin);
-      result = new Utf8(id.toString());
+      if (bin instanceof String) {
+        ObjectId id = new ObjectId((String) bin);
+        result = new Utf8(id.toString());
+      } else {
+        result = new Utf8(bin.toString());
+      }
     } else if (storeType == DocumentFieldType.DATE) {
       Object bin = easybson.get(docf);
       if (bin instanceof Date) {

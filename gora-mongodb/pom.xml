@@ -50,6 +50,8 @@
     <properties>
         <osgi.import>*</osgi.import>
         <osgi.export>org.apache.gora.mongodb*;version="${project.version}";-noimport:=true</osgi.export>
+        <mongo.driver.version>3.1.0</mongo.driver.version>
+        <mongo.embed.version>1.50.0</mongo.embed.version>
     </properties>
 
     <build>
@@ -110,7 +112,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>2.12.2</version>
+            <version>${mongo.driver.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -175,7 +177,7 @@
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>1.45</version>
+            <version>${mongo.embed.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- END of Testing Dependencies -->

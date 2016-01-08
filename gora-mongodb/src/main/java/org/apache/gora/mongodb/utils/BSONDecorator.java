@@ -122,7 +122,8 @@ public class BSONDecorator {
    */
   public Double getDouble(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getDouble(getLeafName(fieldName));
+    String lf = getLeafName(fieldName);
+    return parent.containsField(lf) ? parent.getDouble(lf) : null;
   }
 
   /**
@@ -134,36 +135,39 @@ public class BSONDecorator {
    */
   public Integer getInt(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getInt(getLeafName(fieldName));
+    String lf = getLeafName(fieldName);
+    return parent.containsField(lf) && parent.get(lf) != null ? parent.getInt(lf) : null;
   }
 
   /**
    * Access field as a long.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a double
    */
   public Long getLong(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getLong(getLeafName(fieldName));
+    String lf = getLeafName(fieldName);
+    return parent.containsField(lf) ? parent.getLong(lf) : null;
   }
 
   /**
    * Access field as a date.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a date
    */
   public Date getDate(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getDate(getLeafName(fieldName));
+    String lf = getLeafName(fieldName);
+    return parent.containsField(lf) ? parent.getDate(lf) : null;
   }
 
   /**
    * Access field as a Utf8 string.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a {@link Utf8} string
@@ -179,7 +183,7 @@ public class BSONDecorator {
 
   /**
    * Access field as bytes.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field
@@ -196,7 +200,7 @@ public class BSONDecorator {
 
   /**
    * Access field as an object, no casting.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field
@@ -209,7 +213,7 @@ public class BSONDecorator {
   /**
    * Set field. Create the intermediate levels if necessary as
    * {@link BasicDBObject} fields.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @param value
@@ -224,7 +228,7 @@ public class BSONDecorator {
 
   /**
    * Retrieve the parent of a field.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field
    * @param createIfMissing

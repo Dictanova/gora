@@ -569,7 +569,10 @@ public class MongoStore<K, T extends PersistentBase> extends
       result = easybson.getDouble(docf);
       break;
     case FLOAT:
-      result = easybson.getDouble(docf).floatValue();
+      Double d = easybson.getDouble(docf);
+      if (d != null) {
+        result = d.floatValue();
+      }
       break;
     case INT:
       result = easybson.getInt(docf);

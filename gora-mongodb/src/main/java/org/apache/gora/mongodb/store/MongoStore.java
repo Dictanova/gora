@@ -810,7 +810,7 @@ public class MongoStore<K, T extends PersistentBase> extends
       break;
     case BYTES:
       if (value != null) {
-        result = ((ByteBuffer) value).array();
+        result = bbToBytes(((ByteBuffer) value));
       }
       break;
     case INT:
@@ -845,6 +845,17 @@ public class MongoStore<K, T extends PersistentBase> extends
     }
 
     return result;
+  }
+
+  private Object bbToBytes(ByteBuffer buffer) {
+    if (buffer.hasArray())
+      return buffer.array();
+
+    int length = buffer.limit();
+    byte[] bytes = new byte[length];
+    // Will consume buffer to the end
+    buffer.get(bytes);
+    return bytes;
   }
 
   private Object unionToMongo(final String docf, final Schema fieldSchema,

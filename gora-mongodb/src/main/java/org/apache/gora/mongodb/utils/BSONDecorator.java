@@ -30,7 +30,7 @@ import com.mongodb.DBObject;
 /**
  * Utility class to build {@link DBObject} used by MongoDB in an easy way by
  * directly specifying the fully qualified names of fields.
- * 
+ *
  * @author Fabien Poulard <fpoulard@dictanova.com>
  */
 public class BSONDecorator {
@@ -43,7 +43,7 @@ public class BSONDecorator {
 
   /**
    * Access the decorated {@link BSONObject}.
-   * 
+   *
    * @return the decorated {@link DBObject} in its actual state
    */
   public DBObject asDBObject() {
@@ -54,7 +54,7 @@ public class BSONDecorator {
    * Check if the field passed in parameter exists or not. The field is passed
    * as a fully qualified name that is the path to the field from the root of
    * the document (for example: "field1" or "parent.child.field2").
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field
    * @return true if the field and all its parents exists in the decorated
@@ -80,7 +80,7 @@ public class BSONDecorator {
 
   /**
    * Access field as a {@link BasicDBObject}.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a {@link BasicDBObject}
@@ -92,7 +92,7 @@ public class BSONDecorator {
 
   /**
    * Access field as a {@link BasicDBList}.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a {@link BasicDBList}
@@ -103,7 +103,7 @@ public class BSONDecorator {
 
   /**
    * Access field as a boolean.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a boolean
@@ -115,55 +115,55 @@ public class BSONDecorator {
 
   /**
    * Access field as a double.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a double
    */
   public Double getDouble(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getDouble(getLeafName(fieldName));
+    return isNullValue(fieldName, parent) ? null : parent.getDouble(getLeafName(fieldName));
   }
 
   /**
    * Access field as a int.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a double
    */
   public Integer getInt(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getInt(getLeafName(fieldName));
+    return isNullValue(fieldName, parent) ? null : parent.getInt(getLeafName(fieldName));
   }
 
   /**
    * Access field as a long.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a double
    */
   public Long getLong(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getLong(getLeafName(fieldName));
+    return isNullValue(fieldName, parent) ? null : parent.getLong(getLeafName(fieldName));
   }
 
   /**
    * Access field as a date.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a date
    */
   public Date getDate(String fieldName) {
     BasicDBObject parent = getFieldParent(fieldName);
-    return parent.getDate(getLeafName(fieldName));
+    return isNullValue(fieldName, parent) ? null : parent.getDate(getLeafName(fieldName));
   }
 
   /**
    * Access field as a Utf8 string.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field as a {@link Utf8} string
@@ -179,7 +179,7 @@ public class BSONDecorator {
 
   /**
    * Access field as bytes.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field
@@ -196,7 +196,7 @@ public class BSONDecorator {
 
   /**
    * Access field as an object, no casting.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @return value of the field
@@ -209,7 +209,7 @@ public class BSONDecorator {
   /**
    * Set field. Create the intermediate levels if necessary as
    * {@link BasicDBObject} fields.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field to be accessed
    * @param value
@@ -224,7 +224,7 @@ public class BSONDecorator {
 
   /**
    * Retrieve the parent of a field.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the field
    * @param createIfMissing
@@ -257,9 +257,13 @@ public class BSONDecorator {
     return getFieldParent(fieldName, false);
   }
 
+  private boolean isNullValue(String fieldName, BasicDBObject parent) {
+    return parent.get(getLeafName(fieldName)) == null;
+  }
+
   /**
    * Compute the name of the leaf field.
-   * 
+   *
    * @param fieldName
    *          fully qualified name of the target field
    * @return name of the field at the end of the tree (leaf)
